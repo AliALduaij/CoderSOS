@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from codedHelpApp.views import projectListView, requestListView, projectDetailView, requestDetailView, projectCreateView, requestCreateView, UserLoginAPIView, projectUpdateView, projectDeleteView
+from codedHelpApp.views import projectListView, requestListView, projectDetailView, requestDetailView, projectCreateView, requestCreateView, UserLoginAPIView, projectUpdateView, projectDeleteView, requestUpdateView, UserCreateAPIView, MyProjectsView, MyRequestsView
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -32,14 +32,19 @@ urlpatterns = [
          projectUpdateView.as_view(), name='projectupdate'),
     path('project/delete/<int:object_id>/',
          projectDeleteView.as_view(), name='projectdelete'),
+    path('myprojects/list/', MyProjectsView.as_view(), name='myprojects'),
 
     path('request/list/', requestListView.as_view(), name='requestlist'),
     path('request/detail/<int:object_id>/',
          requestDetailView.as_view(), name='requestdetail'),
     path('request/create/', requestCreateView.as_view(), name='requestcreate'),
+    path('request/update/<int:object_id>/',
+         requestUpdateView.as_view(), name='requestupdate'),
+    path('myrequests/list/', MyRequestsView.as_view(), name='myrequests'),
 
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('register/', UserCreateAPIView.as_view(), name='register'),
 
 
 

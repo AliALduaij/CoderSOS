@@ -3,9 +3,10 @@ from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView,
 from rest_framework.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import generics
 
 from .models import projectModel, requestModel
-from . serializers import projectSerializer, requestSerializer, projectDetailSerializer, requestDetailSerializer, projectCreateSerializer, requestCreateSerializer, UserLoginSerializer
+from . serializers import projectSerializer, requestSerializer, projectDetailSerializer, requestDetailSerializer, projectCreateSerializer, requestCreateSerializer, UserLoginSerializer, requestUpdateSerializer, UserCreateSerializer
 
 
 class projectListView(ListAPIView):
@@ -41,9 +42,27 @@ class projectDeleteView(DestroyAPIView):
     lookup_url_kwarg = 'object_id'
 
 
+class MyProjectsView(generics.ListAPIView):
+    serializer_class = projectSerializer
+
+    def get_queryset(self):
+
+        user = self.request.user
+        return projectModel.objects.filter(coder=user)
+
+
 class requestListView(ListAPIView):
     queryset = requestModel.objects.all()
     serializer_class = requestSerializer
+
+
+class MyRequestsView(generics.ListAPIView):
+    serializer_class = requestSerializer
+
+    def get_queryset(self):
+
+        user = self.request.user
+        return requestModel.objects.filter(coder_profile=user)
 
 
 class requestDetailView(RetrieveAPIView):
@@ -60,6 +79,13 @@ class requestCreateView(CreateAPIView):
         serializer.save(coder_profile=self.request.user)
 
 
+class requestUpdateView(RetrieveUpdateAPIView):
+    queryset = requestModel.objects.all()
+    serializer_class = requestUpdateSerializer
+    lookup_field = 'id'
+    lookup_url_kwarg = 'object_id'
+
+
 class UserLoginAPIView(APIView):
     serializer_class = UserLoginSerializer
 
@@ -70,3 +96,7 @@ class UserLoginAPIView(APIView):
             valid_data = serializer.data
             return Response(valid_data, status=HTTP_200_OK)
         return Response(serializer.errors, HTTP_400_BAD_REQUEST)
+
+
+class UserCreateAPIView(CreateAPIView):
+    serializer_class = UserCreateSerializer
